@@ -66,51 +66,51 @@ async function runTests() {
             console.log("✔ Test 5 Passed: Stayed on signup page due to missing field.");
         }
 
-        // // --- TEST CASE 6: Successful Listing Creation ---
-        // console.log("Starting Test 6: Create New Listing...");
-        // await driver.get(`${baseUrl}/login`);
-        // await driver.findElement(By.name('username')).sendKeys('demo');
-        // await driver.findElement(By.name('password')).sendKeys('demo');
-        // await driver.findElement(By.css('.btn-light')).click();
-        // await driver.get(`${baseUrl}/listing/new`);
-        // await driver.findElement(By.name('listing[title]')).sendKeys('DevOps Suite');
-        // await driver.findElement(By.name('listing[description]')).sendKeys('Testing automated pipelines.');
-        // await driver.findElement(By.name('listing[price]')).sendKeys('5000');
-        // await driver.findElement(By.name('listing[location]')).sendKeys('Islamabad');
-        // await driver.findElement(By.name('listing[country]')).sendKeys('Pakistan');
+        // --- TEST CASE 6: Successful Listing Creation ---
+        console.log("Starting Test 6: Create New Listing...");
+        await driver.get(`${baseUrl}/login`);
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo');
+        await driver.findElement(By.css('.btn-light')).click();
+        await driver.get(`${baseUrl}/listing/new`);
+        await driver.findElement(By.name('listing[title]')).sendKeys('DevOps Suite');
+        await driver.findElement(By.name('listing[description]')).sendKeys('Testing automated pipelines.');
+        await driver.findElement(By.name('listing[price]')).sendKeys('5000');
+        await driver.findElement(By.name('listing[location]')).sendKeys('Islamabad');
+        await driver.findElement(By.name('listing[country]')).sendKeys('Pakistan');
         
-        // const addBtn = await driver.findElement(By.css('.new-btn'));
-        // // Scroll to the button first
-        // await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
-        // // Perform the click via JavaScript to bypass any overlaps
-        // await driver.executeScript("arguments[0].click();", addBtn);
-        // alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
-        // console.log("✔ Test 6 Passed: Listing created while logged in.");
+        const addBtn = await driver.findElement(By.css('.new-btn'));
+        // Scroll to the button first
+        await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
+        // Perform the click via JavaScript to bypass any overlaps
+        await driver.executeScript("arguments[0].click();", addBtn);
+        alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+        console.log("✔ Test 6 Passed: Listing created while logged in.");
 
-        // // --- TEST CASE 7: Unauthorized Access Check ---
-        // console.log("Starting Test 7: Unauthorized Create Attempt...");
-        // await driver.get(`${baseUrl}/logout`); 
-        // await driver.get(`${baseUrl}/listing/new`);
-        // alertElement = await driver.wait(until.elementLocated(By.css('.alert-danger')), 5000);
-        // console.log("✔ Test 7 Passed: System blocked unauthorized creation.");
+        // --- TEST CASE 7: Unauthorized Access Check ---
+        console.log("Starting Test 7: Unauthorized Create Attempt...");
+        await driver.get(`${baseUrl}/logout`); 
+        await driver.get(`${baseUrl}/listing/new`);
+        alertElement = await driver.wait(until.elementLocated(By.css('.alert-danger')), 5000);
+        console.log("✔ Test 7 Passed: System blocked unauthorized creation.");
 
-        // // --- TEST CASE 8: Client-Side Validation ---
-        // console.log("Starting Test 8: Empty Price Validation...");
-        // await driver.get(`${baseUrl}/login`);
-        // await driver.findElement(By.name('username')).sendKeys('demo');
-        // await driver.findElement(By.name('password')).sendKeys('demo');
-        // await driver.findElement(By.css('.btn-light')).click();
-        // await driver.get(`${baseUrl}/listing/new`);
-        // await driver.findElement(By.css('.new-btn')).click();
-        // let priceError = await driver.findElement(By.xpath("//div[contains(text(), 'Enter Valid Price')]"));
-        // if (await priceError.isDisplayed()) console.log("✔ Test 8 Passed: UI validation blocked empty price.");
+        // --- TEST CASE 8: Client-Side Validation ---
+        console.log("Starting Test 8: Empty Price Validation...");
+        await driver.get(`${baseUrl}/login`);
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo');
+        await driver.findElement(By.css('.btn-light')).click();
+        await driver.get(`${baseUrl}/listing/new`);
+        await driver.findElement(By.css('.new-btn')).click();
+        let priceError = await driver.findElement(By.xpath("//div[contains(text(), 'Enter Valid Price')]"));
+        if (await priceError.isDisplayed()) console.log("✔ Test 8 Passed: UI validation blocked empty price.");
 
-        // // --- TEST CASE 9: Brand Logo Navigation ---
-        // console.log("Starting Test 9: Brand Logo Redirect...");
-        // await driver.get(`${baseUrl}/listing/new`);
-        // await driver.findElement(By.className('navbar-brand')).click();
-        // currentUrl = await driver.getCurrentUrl(); // Variable reuse, no 'let'
-        // if (currentUrl.includes('/listing')) console.log("✔ Test 9 Passed: Brand logo redirected to home.");
+        // --- TEST CASE 9: Brand Logo Navigation ---
+        console.log("Starting Test 9: Brand Logo Redirect...");
+        await driver.get(`${baseUrl}/listing/new`);
+        await driver.findElement(By.className('navbar-brand')).click();
+        currentUrl = await driver.getCurrentUrl(); // Variable reuse, no 'let'
+        if (currentUrl.includes('/listing')) console.log("✔ Test 9 Passed: Brand logo redirected to home.");
 
         // --- TEST CASE 10: Successful LogOut ---
         console.log("Starting Test 10: Successful LogOut...");
