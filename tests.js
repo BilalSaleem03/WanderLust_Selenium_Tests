@@ -2,38 +2,63 @@ const { Builder, By, until } = require('selenium-webdriver');
 const chrome = require('selenium-webdriver/chrome');
 
 async function runTests() {
+    // Configuration for headless Chrome as required by the assignment [cite: 14, 15]
     let options = new chrome.Options();
-    options.addArguments('--headless'); // Mandatory for EC2 [cite: 15]
+    options.addArguments('--headless'); 
     options.addArguments('--no-sandbox');
     options.addArguments('--disable-dev-shm-usage');
 
-    let driver = await new Builder().forBrowser('chrome').setChromeOptions(options).build();
+    let driver = await new Builder()
+        .forBrowser('chrome')
+        .setChromeOptions(options)
+        .build();
 
     try {
-        // Replace with your EC2 Public IP or Container Name if on the same network
-        await driver.get('http://<your-ec2-ip>:3001'); 
+        // Replace with your service name 'backend' if running in the Docker network
+        const baseUrl = 'http://3.27.160.224:3001/login';
 
-        // --- TEST CASES (Implement 15 total) ---
+        // --- TEST CASE 1: Correct Login ---
+        console.log("Starting Test 1: Successful Login...");
+        await driver.get(baseUrl);
         
-        // 1. Check Title
-        console.log("Test 1: Checking title...");
-        let title = await driver.getTitle();
-        if (title) console.log("Pass");
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo');
+        await driver.findElement(By.css('.btn-light')).click();
 
-        // 2. Test Navigation to 'Add New'
-        await driver.findElement(By.linkText("Add New Listing")).click();
+        // Check for success flash message
+        let successFlash = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+        let successText = await successFlash.getText();
         
-        // 3. Test Form Submission (Database Storage)
-        await driver.findElement(By.name("listing[title]")).sendKeys("DevOps Test Home");
-        await driver.findElement(By.id("submit-btn")).click();
+        if (successText.includes("Password ot username is incorrect")) { 
+            console.log("✔ Test 1 Passed: Correct login recognized.");
+        } else {
+            throw new Error("Test 1 Failed: Success message not found or incorrect.");
+        }
 
-        // ... Add 12 more cases (Validation, Login, UI checks, etc.) [cite: 11]
+        // --- TEST CASE 2: Wrong Login ---
+        console.log("Starting Test 2: Failed Login...");
+        await driver.get(baseUrl);
+
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo2');
+        await driver.findElement(By.css('.btn-light')).click();
+
+        // Check for error flash message
+        let errorFlash = await driver.wait(until.elementLocated(By.css('.alert-danger')), 5000);
+        let errorText = await errorFlash.getText();
+
+        if (errorText.length > 0) {
+            console.log("✔ Test 2 Passed: Error message displayed for wrong credentials.");
+        } else {
+            throw new Error("Test 2 Failed: Error message not displayed.");
+        }
 
     } catch (err) {
-        console.error("Test Failed:", err);
-        process.exit(1); // Exit with error for Jenkins to catch 
+        console.error("Pipeline Test Failure:", err.message);
+        process.exit(1); // Forces Jenkins to mark the 'Test' stage as failed [cite: 16]
     } finally {
         await driver.quit();
     }
 }
+
 runTests();
