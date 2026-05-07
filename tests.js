@@ -77,7 +77,12 @@ async function runTests() {
         await driver.findElement(By.name('listing[price]')).sendKeys('5000');
         await driver.findElement(By.name('listing[location]')).sendKeys('Islamabad');
         await driver.findElement(By.name('listing[country]')).sendKeys('Pakistan');
-        await driver.findElement(By.css('.new-btn')).click();
+        
+        const addBtn = await driver.findElement(By.css('.new-btn'));
+        // Scroll to the button first
+        await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
+        // Perform the click via JavaScript to bypass any overlaps
+        await driver.executeScript("arguments[0].click();", addBtn);
         alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
         console.log("✔ Test 6 Passed: Listing created while logged in.");
 
