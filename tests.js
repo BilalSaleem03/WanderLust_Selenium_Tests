@@ -114,19 +114,20 @@ async function runTests() {
         // --- TEST CASE 10: Successful LogOut ---
         console.log("Starting Test 10: Successful LogOut...");
 
-        // 1. Ensure we are logged in first so the LogOut link appears
+        // Step 1: Login to get the LogOut link to appear
         await driver.get(`${baseUrl}/login`);
         await driver.findElement(By.name('username')).sendKeys('demo');
         await driver.findElement(By.name('password')).sendKeys('demo');
         await driver.findElement(By.css('.btn-light')).click();
+        // Wait for login to complete
         await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
 
-        // 2. Now find and click the LogOut link
+        // Step 2: Now the LogOut link is visible
         const logoutLink = await driver.wait(until.elementLocated(By.linkText("LogOut")), 5000);
         await logoutLink.click();
 
-        // 3. Verify redirection
-        alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+        // Step 3: Verify logout
+        await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
         console.log("✔ Test 10 Passed: LogOut successful.");
 
         // --- TEST CASE 11: Logged Out Navbar ---
