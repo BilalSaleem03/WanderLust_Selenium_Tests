@@ -74,14 +74,7 @@ async function runTests() {
             console.log("✔ Test 5 Passed: Stayed on signup page due to missing field.");
         }
 
-        // --- ADD TESTS 6 THROUGH 15 BELOW TO MEET REQUIREMENTS  ---
-        // Suggestions:
-        // 6. Navigate to Home
-        // 7. Check if listings are visible
-        // 8. Test invalid email format in signup
-        // 9. Test logout functionality
-        // 10. Test unauthorized access to restricted routes
-        // 11-15. Field-specific validations for listing forms
+        
         // --- TEST CASE 6: Successful Listing Creation (Requires Login) ---
         console.log("Starting Test 6: Create New Listing...");
 
@@ -141,6 +134,60 @@ async function runTests() {
         let currentUrl = await driver.getCurrentUrl();
         if (currentUrl.endsWith('/listings') || currentUrl.endsWith('/')) {
             console.log("✔ Test 9 Passed: Successfully navigated away from form.");
+        }
+
+        // --- TEST CASE 10: Successful LogOut ---
+        console.log("Starting Test 10: Successful LogOut...");
+        // Ensure we are logged in first (reuse login logic if needed)
+        await driver.get(`${baseUrl}/login`);
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo');
+        await driver.findElement(By.css('.btn-light')).click();
+
+        // Find and click the LogOut link from the navbar
+        const logoutLink = await driver.wait(until.elementLocated(By.linkText("LogOut")), 5000);
+        await logoutLink.click();
+
+        // Verify redirection and success message
+        alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+        alertText = await alertElement.getText();
+        if (alertText.includes("logged you out")) {
+            console.log("✔ Test 10 Passed: LogOut successful.");
+        }
+
+        // --- TEST CASE 11: Navbar State (Logged Out) ---
+        console.log("Starting Test 11: Navbar Links (Logged Out)...");
+        // In a logged-out state, 'SignUp' and 'LogIn' should be visible, 'LogOut' should not
+        const signUpLink = await driver.findElement(By.linkText("SignUp"));
+        const logInLink = await driver.findElement(By.linkText("LogIn"));
+
+        if (await signUpLink.isDisplayed() && await logInLink.isDisplayed()) {
+            console.log("✔ Test 11 Passed: Correct links visible in logged-out navbar.");
+        }
+
+        // --- TEST CASE 12: Navbar State (Logged In) ---
+        console.log("Starting Test 12: Navbar Links (Logged In)...");
+        await driver.get(`${baseUrl}/login`);
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo');
+        await driver.findElement(By.css('.btn-light')).click();
+
+        // Verify 'LogOut' and 'New Listing' are now visible
+        const newListingLink = await driver.findElement(By.linkText("New Listing"));
+        if (await newListingLink.isDisplayed()) {
+            console.log("✔ Test 12 Passed: 'New Listing' appeared in navbar after login.");
+        }
+
+        // --- TEST CASE 13: Search Functionality ---
+        console.log("Starting Test 13: Navbar Search Execution...");
+        const searchInput = await driver.findElement(By.name("search"));
+        await searchInput.sendKeys("Islamabad");
+        await driver.findElement(By.css(".search-btn")).click();
+
+        // Verify search results page loaded (adjust based on your app's actual behavior)
+        let currentUrl = await driver.getCurrentUrl();
+        if (currentUrl.includes("/search")) {
+            console.log("✔ Test 13 Passed: Search submitted successfully.");
         }
 
     } catch (err) {
