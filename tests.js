@@ -111,10 +111,21 @@ async function runTests() {
         // currentUrl = await driver.getCurrentUrl(); // Variable reuse, no 'let'
         // if (currentUrl.includes('/listing')) console.log("✔ Test 9 Passed: Brand logo redirected to home.");
 
-        // --- TEST CASE 10: LogOut ---
+        // --- TEST CASE 10: Successful LogOut ---
         console.log("Starting Test 10: Successful LogOut...");
+
+        // 1. Ensure we are logged in first so the LogOut link appears
+        await driver.get(`${baseUrl}/login`);
+        await driver.findElement(By.name('username')).sendKeys('demo');
+        await driver.findElement(By.name('password')).sendKeys('demo');
+        await driver.findElement(By.css('.btn-light')).click();
+        await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+
+        // 2. Now find and click the LogOut link
         const logoutLink = await driver.wait(until.elementLocated(By.linkText("LogOut")), 5000);
         await logoutLink.click();
+
+        // 3. Verify redirection
         alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
         console.log("✔ Test 10 Passed: LogOut successful.");
 
