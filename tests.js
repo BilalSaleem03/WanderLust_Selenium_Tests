@@ -72,11 +72,13 @@ async function runTests() {
         await driver.findElement(By.name('username')).sendKeys('demo');
         await driver.findElement(By.name('password')).sendKeys('demo');
         await driver.findElement(By.css('.btn-light')).click();
-
-        // Wait for login redirect/alert BEFORE navigating away
         await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+        console.log("Test 6: Login successful, session established.");
 
         await driver.get(`${baseUrl}/listing/new`);
+        const currentUrlBefore = await driver.getCurrentUrl();
+        console.log("Test 6: Current URL before fill:", currentUrlBefore);
+
         await driver.findElement(By.name('listing[title]')).sendKeys('DevOps Suite');
         await driver.findElement(By.name('listing[description]')).sendKeys('Testing automated pipelines.');
         await driver.findElement(By.name('listing[price]')).sendKeys('5000');
@@ -87,8 +89,15 @@ async function runTests() {
         await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
         await driver.executeScript("arguments[0].click();", addBtn);
 
-        // Wait for redirect to complete, then check for alert on the new page
-        await driver.wait(until.urlContains('/listing'), 8000);
+        // Wait 5 seconds for whatever happens after submit
+        await driver.sleep(5000);
+
+        const urlAfter = await driver.getCurrentUrl();
+        const pageSource = await driver.getPageSource();
+        console.log("Test 6: URL after submit:", urlAfter);
+        // Print first 2000 chars of page to see what rendered
+        console.log("Test 6: Page snippet:", pageSource.substring(0, 2000));
+
         alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 8000);
         console.log("✔ Test 6 Passed: Listing created while logged in.");
 
