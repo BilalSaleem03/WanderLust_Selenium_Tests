@@ -66,25 +66,30 @@ async function runTests() {
             console.log("✔ Test 5 Passed: Stayed on signup page due to missing field.");
         }
 
-        // --- TEST CASE 6: Successful Listing Creation ---
+        /// --- TEST CASE 6: Successful Listing Creation ---
         console.log("Starting Test 6: Create New Listing...");
         await driver.get(`${baseUrl}/login`);
         await driver.findElement(By.name('username')).sendKeys('demo');
         await driver.findElement(By.name('password')).sendKeys('demo');
         await driver.findElement(By.css('.btn-light')).click();
+
+        // Wait for login redirect/alert BEFORE navigating away
+        await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+
         await driver.get(`${baseUrl}/listing/new`);
         await driver.findElement(By.name('listing[title]')).sendKeys('DevOps Suite');
         await driver.findElement(By.name('listing[description]')).sendKeys('Testing automated pipelines.');
         await driver.findElement(By.name('listing[price]')).sendKeys('5000');
         await driver.findElement(By.name('listing[location]')).sendKeys('Islamabad');
         await driver.findElement(By.name('listing[country]')).sendKeys('Pakistan');
-        
+
         const addBtn = await driver.findElement(By.css('.new-btn'));
-        // Scroll to the button first
         await driver.executeScript("arguments[0].scrollIntoView(true);", addBtn);
-        // Perform the click via JavaScript to bypass any overlaps
         await driver.executeScript("arguments[0].click();", addBtn);
-        alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 5000);
+
+        // Wait for redirect to complete, then check for alert on the new page
+        await driver.wait(until.urlContains('/listing'), 8000);
+        alertElement = await driver.wait(until.elementLocated(By.css('.alert-success')), 8000);
         console.log("✔ Test 6 Passed: Listing created while logged in.");
 
         // --- TEST CASE 7: Unauthorized Access Check ---
