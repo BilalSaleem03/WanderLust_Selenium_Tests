@@ -70,6 +70,9 @@ async function runTests() {
         await driver.findElement(By.name('email')).sendKeys('test@test.com');
         await driver.findElement(By.css('.btn-light')).click();
 
+        // First, get the URL
+        let currentUrl = await driver.getCurrentUrl(); 
+        // Then, check it
         if (currentUrl.includes('/signup')) {
             console.log("✔ Test 5 Passed: Stayed on signup page due to missing field.");
         }
